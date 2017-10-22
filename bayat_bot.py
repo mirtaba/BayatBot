@@ -1,7 +1,10 @@
-
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging
 import psycopg2
+from telegram.update import Update
+
+import database_manager
+from FSM import FSM
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -13,21 +16,24 @@ logger = logging.getLogger(__name__)
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
-    update.message.reply_text('Hi!')
-
+    # inserts new user to database (if not exist) and sets initial state to 'initial'
+    state = database_manager.get_user_state(update.message.chat.id)
+    fsm = FSM(state)
+    print("state before is: " + fsm.machine.state)
+    fsm.machine.start(update)
+    print("state after is: " + fsm.machine.state)
+    database_manager.set_user_state(update.message.chat.id, fsm.machine.state)
 
 def help(bot, update):
     update.message.reply_text('Help!')
 
 
 def message_handler(bot, update):
-
-
     update.message.reply_text(update.message.text)
 
 
 def error(bot, update, error):
-    logger.warn('Update "%s" caused error "%s"' % (update, error))
+    logger.warning('Update "%s" caused error "%s"' % (update, error))
 
 
 def main():
@@ -50,7 +56,7 @@ def main():
 
     # Start the Bot
     updater.start_polling()
-    print ("bot started.")
+    print("bot started.")
 
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since

@@ -1,5 +1,6 @@
 from transitions import Machine
-from transitions_methods import *
+from transitions_methods import Methods
+
 
 class FSM:
     # The states
@@ -7,12 +8,13 @@ class FSM:
 
     # The transitions
     transitions = [
-        {'trigger': 'start', 'source': 'initial', 'dest': 'startPage'},
+        {'trigger': 'start', 'source': 'initial', 'dest': 'startPage', 'before': 'welcome'},
         {'trigger': 'features', 'source': 'startPage', 'dest': 'featuresPage'},
         {'trigger': 'cancel', 'source': 'featuresPage', 'dest': 'startPage'},
-        {'trigger': 'askForClass', 'source': 'featuresPage', 'dest': 'featuresPage'}
+        {'trigger': 'ask_for_class', 'source': 'featuresPage', 'dest': 'featuresPage'}
     ]
 
     # Initializer
-    def __init__(self, user, state):
-        Machine(user, states=self.states, transitions=self.transitions, initial=state)
+    def __init__(self, state):
+        self.machine = Methods()
+        Machine(model=self.machine, states=self.states, transitions=self.transitions, initial=state)
