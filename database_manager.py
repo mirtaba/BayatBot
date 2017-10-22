@@ -16,7 +16,7 @@ cur.execute("INSERT INTO test (num, data) VALUES (%s, %s)", (100, "abc'def"))
 # Query the database and obtain data as Python objects
 cur.execute("SELECT * FROM test;")
 cur.fetchone()
-#(1, 100, "abc'def")
+# (1, 100, "abc'def")
 
 # Make the changes to the database persistent
 conn.commit()
@@ -24,3 +24,18 @@ conn.commit()
 # Close communication with the database
 cur.close()
 conn.close()
+
+
+def get_user_state(user_id):
+    connect_string = "host='localhost' dbname='db_lab' user='meysam' password='9092301202'"
+    conn = psycopg2.connect(connect_string)
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM users WHERE user_id=%s", (user_id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    user_state = cur.fetchone()
+    if user_state:
+        return user_state[2]
+    else:
+        pass # TODO insert the new user state to database

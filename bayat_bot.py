@@ -1,13 +1,3 @@
-"""
-This Bot uses the Updater class to handle the bot.
-First, a few handler functions are defined. Then, those functions are passed to
-the Dispatcher and registered at their respective places.
-Then, the bot is started and runs until we press Ctrl-C on the command line.
-Usage:
-Basic Echobot example, repeats messages.
-Press Ctrl-C on the command line or send a signal to the process to stop the
-bot.
-"""
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging
@@ -30,14 +20,8 @@ def help(bot, update):
     update.message.reply_text('Help!')
 
 
-def echo(bot, update):
-    connect_string = "host='localhost' dbname='db_lab' user='meysam' password='9092301202'"
-    conn = psycopg2.connect(connect_string)
-    cur = conn.cursor()
-    cur.execute("INSERT INTO log (massage, chat_id) VALUES (%s, %s)", (update.message.text, update.update_id))
-    conn.commit()
-    cur.close()
-    conn.close()
+def message_handler(bot, update):
+
 
     update.message.reply_text(update.message.text)
 
@@ -59,7 +43,7 @@ def main():
     dp.add_handler(CommandHandler("help", help))
 
     # on noncommand i.e message - echo the message on Telegram
-    dp.add_handler(MessageHandler(Filters.text, echo))
+    dp.add_handler(MessageHandler(Filters.text, message_handler))
 
     # log all errors
     dp.add_error_handler(error)
