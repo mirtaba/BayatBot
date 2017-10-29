@@ -24,12 +24,33 @@ def start(bot, update):
     print("state after is: " + fsm.machine.state)
     database_manager.set_user_state(update.message.chat.id, fsm.machine.state)
 
+
 def help(bot, update):
     update.message.reply_text('Help!')
 
 
 def message_handler(bot, update):
-    update.message.reply_text(update.message.text)
+    state = database_manager.get_user_state(update.message.chat.id)
+    fsm = FSM(state)
+    print("state before is: " + fsm.machine.state)
+    if update.message.text == 'اضافه کردن کلاس':
+        fsm.machine.add_class(update)
+        print("state after is: " + fsm.machine.state)
+        database_manager.set_user_state(update.message.chat.id, fsm.machine.state)
+
+    else:
+        parts = update.message.text.split(' ')
+        print('FFFFFFFFFuuuuuuuuuuucccccccckkkkk: ')
+        for p in parts:
+            print(p)
+        database_manager.add_class(parts[0], parts[1], parts[2:])
+        fsm.machine.add_class_finished(update, parts[0], parts[1], parts[2:])
+        database_manager.set_user_state(update.message.chat.id, fsm.machine.state)
+
+
+
+
+        # update.message.reply_text(update.message.text)
 
 
 def error(bot, update, error):

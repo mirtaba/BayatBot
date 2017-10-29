@@ -43,3 +43,13 @@ def set_user_state(user_id, state):
     conn.commit()
     cur.close()
     conn.close()
+
+
+def add_class(class_number, cap, des):
+    conn = psycopg2.connect(connect_string)
+    cur = conn.cursor()
+    cur.execute("INSERT INTO classroom (number, cap, description) VALUES (%s,%s,%s)",
+                (class_number, cap, des))
+    conn.commit()
+    cur.close()
+    conn.close()
