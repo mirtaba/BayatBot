@@ -1,6 +1,5 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging
-import psycopg2
 from telegram.update import Update
 
 import database_manager
@@ -13,8 +12,6 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 
-# Define a few command handlers. These usually take the two arguments bot and
-# update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
     # inserts new user to database (if not exist) and sets initial state to 'initial'
     state = database_manager.get_user_state(update.message.chat.id)
@@ -38,7 +35,7 @@ def message_handler(bot, update):
         print("state after is: " + fsm.machine.state)
         database_manager.set_user_state(update.message.chat.id, fsm.machine.state)
 
-    else:
+    elif fsm.machine.state == 'new_class':
         parts = update.message.text.split(' ')
         print('FFFFFFFFFuuuuuuuuuuucccccccckkkkk: ')
         for p in parts:
@@ -62,28 +59,19 @@ def main():
     TOKEN = '442623399:AAGmotTuyXZ26Il29ysq0O0xRBQ9_PEoDhY'
     updater = Updater(TOKEN)
 
-    # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
-    # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
 
-    # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text, message_handler))
 
-    # log all errors
     dp.add_error_handler(error)
 
-    # Start the Bot
     updater.start_polling()
     print("bot started.")
 
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
     updater.idle()
-
 
 if __name__ == '__main__':
     main()
