@@ -35,16 +35,24 @@ def message_handler(bot, update):
         print("state after is: " + fsm.machine.state)
         database_manager.set_user_state(update.message.chat.id, fsm.machine.state)
 
+    elif update.message.text == 'اضافه کردن استاد':
+
+        fsm.machine.add_teacher(update)
+        print("state after is: " + fsm.machine.state)
+        database_manager.set_user_state(update.message.chat.id, fsm.machine.state)
+
     elif fsm.machine.state == 'new_class':
         parts = update.message.text.split(' ')
         print('FFFFFFFFFuuuuuuuuuuucccccccckkkkk: ')
-        for p in parts:
-            print(p)
         database_manager.add_class(parts[0], parts[1], parts[2:])
         fsm.machine.add_class_finished(update, parts[0], parts[1], parts[2:])
         database_manager.set_user_state(update.message.chat.id, fsm.machine.state)
 
-
+    elif fsm.machine.state == 'new_teacher':
+        parts = update.message.text.split(' ')
+        print('فااااااااااااااکککککککککککککککککک: ')
+        fsm.machine.add_teacher_finished(update, parts[0], parts[1],)
+        database_manager.set_user_state(update.message.chat.id, fsm.machine.state)
 
 
         # update.message.reply_text(update.message.text)
