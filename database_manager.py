@@ -53,3 +53,15 @@ def add_class(class_number, cap, des):
     conn.commit()
     cur.close()
     conn.close()
+
+
+def add_teacher(f_name, l_name):
+    conn = psycopg2.connect(connect_string)
+    cur = conn.cursor()
+    cur.execute("SELECT add_teacher(%s,%s);", (f_name, l_name))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+add_teacher('رامک', 'قوامی زاده')
