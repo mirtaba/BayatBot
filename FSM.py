@@ -4,7 +4,7 @@ from transitions_methods import Methods
 
 class FSM:
     # The states
-    states = ['initial', 'startPage', 'new_class' , 'new_teacher']
+    states = ['initial', 'startPage', 'new_class', 'new_teacher']
 
     # The transitions
     transitions = [
