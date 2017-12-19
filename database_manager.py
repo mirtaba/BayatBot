@@ -1,6 +1,6 @@
 import psycopg2
 
-connect_string = "host='localhost' dbname='db_lab' user='meysam' password='9092301202'"
+connect_string = "host='localhost' dbname='db_lab' user='postgres' password='9092301202'"
 
 """""
 just kept for sample
@@ -62,3 +62,19 @@ def add_teacher(f_name, l_name):
     conn.commit()
     cur.close()
     conn.close()
+
+
+def get_teachers_list():
+    conn = psycopg2.connect(connect_string)
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM teacher;")
+
+    t_list = []
+    for row in cur:
+        t_list.append(row[1] + ' ' + row[2])
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return t_list
