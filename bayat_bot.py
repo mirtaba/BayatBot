@@ -79,7 +79,11 @@ def message_handler(bot, update):
 
         taken_class = database_manager.find_and_insert_class(temp_map[update.message.chat.id])
 
-        fsm.machine.class_got(update)  # todo
+        fsm.machine.class_got(update, taken_class,
+                              temp_map[update.message.chat.id][0],
+                              temp_map[update.message.chat.id][1],
+                              temp_map[update.message.chat.id][2],
+                              )
 
         del temp_map[update.message.chat.id]
         database_manager.set_user_state(update.message.chat.id, fsm.machine.state)

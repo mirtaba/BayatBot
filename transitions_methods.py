@@ -74,8 +74,20 @@ class Methods:
             reply_markup=telegram.ReplyKeyboardMarkup(teacher_keyboard)
         )
 
-    def get_class_finished(self, update):
-        update.message.reply_text(
-            'کلاس مورد نظر رزرو شد.',
-            reply_markup=telegram.ReplyKeyboardMarkup(self.menu)
-        )
+    def get_class_finished(self, update, class_number, teacher, week, time):
+        if class_number != -1:
+            update.message.reply_text(
+                'کلاس شماره ' +
+                str(class_number) +
+                ' برای ' + week + ' ها ' + 'ساعت ' + time +
+                ' برای استاد ' +
+                str(teacher) +
+                ' رزرو شد.',
+                reply_markup=telegram.ReplyKeyboardMarkup(self.menu)
+            )
+        else:
+            update.message.reply_text(
+                'در روز ' + week + 'ها ' + 'ساعت ' + time +
+                ' کلاس خالی وجود ندارد. لطفا ساعت دیگری را امتحان کنید.',
+                reply_markup=telegram.ReplyKeyboardMarkup(self.menu)
+            )
