@@ -78,3 +78,47 @@ def get_teachers_list():
     conn.close()
 
     return t_list
+
+
+def find_and_insert_class(list):
+    conn = psycopg2.connect(connect_string)
+    cur = conn.cursor()
+    cur.execute("BEGIN;")
+    cur.execute("SAVEPOINT my_savepoint;")
+    if len(list) != 3:
+        cur.execute("ROLLBACK TO my_savepoint;")
+    else:
+        cur.execute("SELECT * from classroom;")
+        all_classes = []
+        for row in cur:
+            if row[3]:  # if class is available
+                all_classes.append(row[1])
+        print("all classes: " + str(all_classes))
+
+        cur.execute('SELECT class_number FROM assigned_classes '
+                    'WHERE week_number=%s '
+                    'and time_number=%s;',
+                    (list[1], list[2]))
+        busy_classes = []
+        for row in cur:
+            busy_classes.append(row[0])
+        print("busy classes: " + str(busy_classes))
+
+        for classroom in busy_classes:
+            all_classes.remove(classroom)
+
+        if len(all_classes) < 1:
+            cur.execute("ROLLBACK TO my_savepoint;")
+        else:
+
+            cur.execute("INSERT INTO assigned_classes (teacher, class_number, week_number, time_number) "
+                        "VALUES (%s,%s,%s,%s);",
+                        (list[0], all_classes[0], list[1], list[2])
+                        )
+            cur.execute("COMMIT;")
+            return all_classes[0]
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return -1
