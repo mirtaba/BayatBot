@@ -122,3 +122,141 @@ def find_and_insert_class(list):
     conn.close()
 
     return -1
+
+
+def drop_tables():
+    conn = psycopg2.connect(connect_string)
+    cur = conn.cursor()
+    cur.execute('DROP TABLE "public".course;')
+    cur.execute('DROP TABLE "public".student;')
+    cur.execute('DROP TABLE "public".prof;')
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+def init():
+    conn = psycopg2.connect(connect_string)
+    cur = conn.cursor()
+    cur.execute(
+        'CREATE TABLE '
+        'public.student('
+        'id INT PRIMARY KEY NOT NULL,name VARCHAR(100) NOT NULL,'
+        'year INT NOT NULL);'
+        'CREATE UNIQUE INDEX student_id_uindex ON public.student (id);'
+    )
+
+    cur.execute(
+        'CREATE TABLE '
+        'public.course('
+        'id VARCHAR(10) PRIMARY KEY NOT NULL,'
+        'name VARCHAR(100) NOT NULL,'
+        'credit INT NOT NULL);'
+        'CREATE UNIQUE INDEX course_id_uindex ON public.course (id);'
+    )
+
+    cur.execute(
+        'CREATE TABLE '
+        'public.prof('
+        'id VARCHAR(10) PRIMARY KEY NOT NULL,'
+        'name VARCHAR(100) NOT NULL,'
+        'salary INT NOT NULL);'
+        'CREATE UNIQUE INDEX prof_id_uindex ON public.prof (id);'
+    )
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+def add_student(id, name, year):
+    conn = psycopg2.connect(connect_string)
+    cur = conn.cursor()
+    retval = 0
+    try:
+        cur.execute('INSERT INTO student (id, name, "year") VALUES (%s,%s,%s)',
+                    (id, name, year))
+    except psycopg2.IntegrityError:
+        retval = -1
+
+    conn.commit()
+    cur.close()
+    conn.close()
+    return retval
+
+
+def add_course(id, name, credit):
+    conn = psycopg2.connect(connect_string)
+    cur = conn.cursor()
+    retval = 0
+    try:
+        cur.execute('INSERT INTO course (id, name, credit) VALUES (%s,%s,%s)',
+                    (id, name, credit))
+    except psycopg2.IntegrityError:
+        retval = -1
+
+    conn.commit()
+    cur.close()
+    conn.close()
+    return retval
+
+
+def add_prof(id, name, salary):
+    conn = psycopg2.connect(connect_string)
+    cur = conn.cursor()
+    retval = 0
+    try:
+        cur.execute('INSERT INTO prof (id, name, salary) VALUES (%s,%s,%s)',
+                    (id, name, salary))
+    except psycopg2.IntegrityError:
+        retval = -1
+
+    conn.commit()
+    cur.close()
+    conn.close()
+    return retval
+
+
+def get_students():
+    conn = psycopg2.connect(connect_string)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM student')
+    for val in cur:
+        print(str(val[0]) + ', ' + str(val[1]) + ', ' + str(val[2]))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+def get_courses():
+    conn = psycopg2.connect(connect_string)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM course')
+    for val in cur:
+        print(str(val[0]) + ', ' + str(val[1]) + ', ' + str(val[2]))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+def get_profs():
+    conn = psycopg2.connect(connect_string)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM prof')
+    for val in cur:
+        print(str(val[0]) + ', ' + str(val[1]) + ', ' + str(val[2]))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+def search_student(name):
+    conn = psycopg2.connect(connect_string)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM student')
+    for val in cur:
+        if val[1].lower().startswith(name):
+            print(str(val[0]) + ', ' + str(val[1]) + ', ' + str(val[2]))
+    conn.commit()
+    cur.close()
+    conn.close()
